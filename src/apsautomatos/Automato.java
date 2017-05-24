@@ -16,6 +16,7 @@ public class Automato {
     private String palavraNaoProcessada;
     public Stack<Character> pilha = new Stack<>();
     private String estAtual;
+    boolean avancou;
 
     /**
      * 
@@ -25,6 +26,7 @@ public class Automato {
      */
     
     public Automato(String palavraNaoProcessada, String estAtual, Stack<Character> p) {
+        this.avancou = false;
         this.palavraNaoProcessada = palavraNaoProcessada;
         this.estAtual = estAtual;
         this.pilha = p;
@@ -61,5 +63,22 @@ public class Automato {
         System.out.println("Palavra não processada: " + this.palavraNaoProcessada);
         System.out.println("Pilha: " + this.pilha);
     }
+
+    /**
+     *
+     * @return Retorna 1 se o automato avançou nas transiçoes e 0 se o automato não consegue realizar mais nenhuma transição
+     */
+    public boolean getAvancou() {
+        return avancou;
+    }
+
+    /**
+     *
+     * @param avancou true ou false
+     */
+    public void setAvancou(boolean avancou) {
+        this.avancou = avancou;
+    }
+    
     
 }

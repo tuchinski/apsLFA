@@ -18,7 +18,7 @@ import java.util.Stack;
 
 /**
  *
- * @author tuchinski
+ * @author Leonardo Mendonça Tuchinski
  */
 public class APSAutomatos{
     
@@ -58,7 +58,7 @@ public class APSAutomatos{
         //List<String>[4] = Simbolos a empilhar(topo a esquerda e base a direita)
         
         //palavra inicial(a palavra que foi digitada)
-        String palavra = "abba";
+        String palavra = "";
         
         //Pilha inicial do automato
         Stack<Character> pilhaAutomato = new Stack<>();
@@ -79,7 +79,7 @@ public class APSAutomatos{
         boolean eAceito = false;
         
         //tenta fazer a leitura do arquivo
-        try (BufferedReader data = new BufferedReader(new InputStreamReader(new FileInputStream("/home/tuchinski/Documentos/LFA/teste.txt")))) {
+        try (BufferedReader data = new BufferedReader(new InputStreamReader(new FileInputStream("/home/todos/alunos/cm/a1792334/Documentos/apsLFA/teste.txt")))) {
                //enquanto houver linhas disponiveis faça
             while (((line = data.readLine()) != null)) {
                 /*esse switch serve para salvar cada dado de cada linha na sua respectiva variável
@@ -149,10 +149,9 @@ public class APSAutomatos{
         //se o arquivo não for encontrado
         catch(FileNotFoundException a){
             System.out.println(a.toString());
-        }
-//        
+        }  
         
-        
+        //verifica se a palavra possui algum simbolo que nao está no alfabeto
         for(int i=0;i<palavra.length();i++){
             if(!alfabetoEntrada.contains(palavra.charAt(i))){
                 System.out.println("A palavra contem simbolo(s) que não faz parte do alfabeto");
@@ -170,6 +169,7 @@ public class APSAutomatos{
         
         while(!listaAutomatos.isEmpty()){
             Automato automatoAtual = listaAutomatos.get(elementoLista);
+            automatoAtual.setPalavraNaoProcessada(listaAutomatos.get(elementoLista).getPalavraNaoProcessada());
             if(automatoAtual.getPalavraNaoProcessada().equals("")){
                 if((automatoAtual.pilha.isEmpty()) | conjuntoEstadosAceitacao.contains(automatoAtual.getEstAtual())){
                     eAceito = true;
@@ -185,6 +185,7 @@ public class APSAutomatos{
                    // simbolo da transiçao em questão
                    if(automatoAtual.getPalavraNaoProcessada().charAt(0) == ls.get(1).charAt(0)) {
                        //verifica se o topo da pilha do automato é igual ao simbolo determinado na transição
+                       //PRIMEIRA VERIFICAÇÃO
                        if(automatoAtual.getPilha().peek() == ls.get(2).charAt(0)){
                            automatoAtual.setPalavraNaoProcessada(automatoAtual.getPalavraNaoProcessada().substring(1));
                            automatoAtual.pilha.pop();
@@ -195,7 +196,8 @@ public class APSAutomatos{
                                }
                            }
                            automatoAtual.setEstAtual(ls.get(3));
-                       }else //verifica se o simbolo do topo da pilha na transição é epsilon
+                           automatoAtual.setAvancou(true);
+                       }else //SEGUNDA VERIFICAÇÃO: verifica se o simbolo do topo da pilha na transição é epsilon 
                            if(ls.get(2).equals(epsilon)){
                            automatoAtual.setPalavraNaoProcessada(automatoAtual.getPalavraNaoProcessada().substring(1));
                            String simbolosEmpilhar = ls.get(4);
@@ -205,10 +207,12 @@ public class APSAutomatos{
                                }
                            }
                            automatoAtual.setEstAtual(ls.get(3));
+                           automatoAtual.setAvancou(true);
                        }
                    }
                    //verifica se o simbolo da palavra pedido pela transiçao é epsilon
                    if(ls.get(1).equals(epsilon)){
+                       //TERCEIRA VERIFICAÇÃO
                        //verifica se o topo da pilha do automato é igual ao simbolo determinado na transição
                        if(automatoAtual.pilha.peek() == ls.get(2).charAt(0)){
                            Stack<Character> pilhaNovoAutomato = (Stack<Character>) automatoAtual.pilha.clone();
@@ -221,16 +225,31 @@ public class APSAutomatos{
                            }   
                            Automato novoAutomato = new Automato(automatoAtual.getPalavraNaoProcessada(), ls.get(3), pilhaNovoAutomato);
                            listaAutomatos.add(novoAutomato);
+                           automatoAtual.setAvancou(true);
+                       }else
+                            if(ls.get(2).equals(epsilon)){
+                                Automato novoAutomato = new Automato(automatoAtual.getPalavraNaoProcessada(), automatoAtual.getEstAtual(), automatoAtual.pilha);
+                                listaAutomatos.add(novoAutomato);
                        }
                    }
                 }
             }
+            if(!automatoAtual.getAvancou()){
+                Automato remove = listaAutomatos.remove(elementoLista);
+                System.out.println("Transição removida: ");
+                remove.printAutomato();
+            }
             
-            
-            elementoLista = (elementoLista+1) % listaAutomatos.size();
+            if(!listaAutomatos.isEmpty()){
+                elementoLista = (elementoLista+1) % listaAutomatos.size();
+            }
         }
         
-        
+        if(!eAceito){
+            System.out.println("Palavra não é aceita pelo autômato");
+        }else{
+            System.out.println("Palavra aceita pelo automato");
+        }
         
         
     }
