@@ -148,7 +148,8 @@ public class APSAutomatos{
         }
         //se o arquivo não for encontrado
         catch(FileNotFoundException a){
-            System.out.println(a.toString());
+            System.out.println("O arquivo não foi encontrado!");
+            System.exit(1);
         }  
         
         //verifica se a palavra possui algum simbolo que nao está no alfabeto
