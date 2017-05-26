@@ -58,7 +58,7 @@ public class APSAutomatos{
         //List<String>[4] = Simbolos a empilhar(topo a esquerda e base a direita)
         
         //palavra inicial(a palavra que foi digitada)
-        String palavra = "";
+        String palavra = "abba";
         
         //Pilha inicial do automato
         Stack<Character> pilhaAutomato = new Stack<>();
@@ -79,7 +79,7 @@ public class APSAutomatos{
         boolean eAceito = false;
         
         //tenta fazer a leitura do arquivo
-        try (BufferedReader data = new BufferedReader(new InputStreamReader(new FileInputStream("/home/todos/alunos/cm/a1792334/Documentos/apsLFA/teste.txt")))) {
+        try (BufferedReader data = new BufferedReader(new InputStreamReader(new FileInputStream("teste.txt")))) {
                //enquanto houver linhas disponiveis faça
             while (((line = data.readLine()) != null)) {
                 /*esse switch serve para salvar cada dado de cada linha na sua respectiva variável
@@ -199,12 +199,12 @@ public class APSAutomatos{
                            automatoAtual.setEstAtual(ls.get(3));
                            automatoAtual.setAvancou(true);
                        }else //SEGUNDA VERIFICAÇÃO: verifica se o simbolo do topo da pilha na transição é epsilon 
-                           if(ls.get(2).equals(epsilon)){
+                           if(ls.get(2).charAt(0) == epsilon){
                            automatoAtual.setPalavraNaoProcessada(automatoAtual.getPalavraNaoProcessada().substring(1));
-                           String simbolosEmpilhar = ls.get(4);
-                           if(!simbolosEmpilhar.equals(epsilon)){
-                               for(int var = simbolosEmpilhar.length();var<=0;var--){
-                                   automatoAtual.pilha.push(simbolosEmpilhar.charAt(var));
+                           String simbolosEmpilhar = new StringBuilder(ls.get(4)).reverse().toString();
+                           if(simbolosEmpilhar.charAt(0) != epsilon){
+                               for(int t = 0;t<simbolosEmpilhar.length();t++){
+                                   automatoAtual.pilha.push(simbolosEmpilhar.charAt(t));
                                }
                            }
                            automatoAtual.setEstAtual(ls.get(3));
@@ -212,7 +212,7 @@ public class APSAutomatos{
                        }
                    }
                    //verifica se o simbolo da palavra pedido pela transiçao é epsilon
-                   if(ls.get(1).equals(epsilon)){
+                   if(ls.get(1).charAt(0) == epsilon){
                        //TERCEIRA VERIFICAÇÃO
                        //verifica se o topo da pilha do automato é igual ao simbolo determinado na transição
                        if(automatoAtual.pilha.peek() == ls.get(2).charAt(0)){
@@ -228,9 +228,10 @@ public class APSAutomatos{
                            listaAutomatos.add(novoAutomato);
                            automatoAtual.setAvancou(true);
                        }else
-                            if(ls.get(2).equals(epsilon)){
-                                Automato novoAutomato = new Automato(automatoAtual.getPalavraNaoProcessada(), automatoAtual.getEstAtual(), automatoAtual.pilha);
+                            if(ls.get(2).charAt(0) == epsilon){
+                                Automato novoAutomato = new Automato(automatoAtual.getPalavraNaoProcessada(), ls.get(3), (Stack<Character>) automatoAtual.pilha.clone());
                                 listaAutomatos.add(novoAutomato);
+                                automatoAtual.setAvancou(true);
                        }
                    }
                 }
